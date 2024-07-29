@@ -17,7 +17,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'python test.py'
+                sh 'python test.py MyPipeline1 init IN_PROGRESS'
             }
         }
     }
