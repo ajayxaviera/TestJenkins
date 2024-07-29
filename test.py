@@ -15,6 +15,11 @@ try:
     print(sys.argv[1])
     print(sys.argv[2])
     print(sys.argv[3])
+
+    global pipeline, stage, status
+    pipeline = sys.argv[1]
+    stage = sys.argv[2]
+    status = sys.argv[3]
 except Exception as ee:
     print("No aruguments from commandline")
 
@@ -140,6 +145,6 @@ def get_specific_job(jobname):
                 print(f"Pipeline {build} is running on {stage['name']} stage")
 
 
-get_input()
+# get_input()
 
 get_job_details(pipeline, stage, status)
