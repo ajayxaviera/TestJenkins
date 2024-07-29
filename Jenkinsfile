@@ -2,11 +2,18 @@ pipeline {
     agent any 
 
     stages {
-        stage('Checkout') {
+        // stage('Checkout') {
+        //     steps {
+        //         git branch: 'main', url: 'https://github.com/ajayxaviera/TestJenkins.git'
+        //     }
+        // }
+
+        stage('Install requirements'){
             steps {
-                git branch: 'main', url: 'https://github.com/ajayxaviera/TestJenkins.git'
+                sh 'pip install jenkinsapi'
             }
         }
+
 
         stage('Run Tests') {
             steps {
