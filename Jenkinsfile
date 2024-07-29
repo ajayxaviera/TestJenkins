@@ -4,13 +4,13 @@ pipeline {
     stages {
         
 
-        stage('Install requirements') {
+        stage('Install pip') {
             steps {
                 sh 'pip install jenkinsapi'
             }
         }
 
-        stage('Run Tests') {
+        stage('Execute script') {
             steps {
                 sh "python test.py \"${params.pipeline}\" \"${params.stage}\" \"${params.status}\""
             }
