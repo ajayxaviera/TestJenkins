@@ -3,9 +3,9 @@ import requests
 from requests.auth import HTTPBasicAuth
 from jenkinsapi.jenkins import Jenkins
 
-jenkins_url = 'http://localhost:8090'
+jenkins_url = 'http://localhost:8080'
 username = 'ajayxavier'
-token = '1137264fcd2aad9bc9b1ce66280021832c'
+token = '11fe4e4682b27a41fa9d9db9545252816b'
 pipeline = ""
 stage = ""
 status = ""
