@@ -17,9 +17,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh '''
-                    python test.py "${params.pipeline}" "${params.stage}" "${params.status}"
-                '''
+                sh 'python test.py "${params.pipeline}" "${params.stage}" "${params.status}"'
             }
         }
     }
