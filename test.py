@@ -16,7 +16,7 @@ try:
     print(sys.argv[2])
     print(sys.argv[3])
 
-    global pipeline, stage, status
+    # global pipeline, stage, status
     pipeline = sys.argv[1]
     stage = sys.argv[2]
     status = sys.argv[3]
