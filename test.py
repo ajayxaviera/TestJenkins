@@ -1,5 +1,6 @@
 import sys
 import requests
+from datetime import datetime , timedelta,timezone
 from requests.auth import HTTPBasicAuth
 from jenkinsapi.jenkins import Jenkins
 
@@ -10,18 +11,24 @@ pipeline = ""
 stage = ""
 status = ""
 
+# print("length = ",len(sys.argv) - 1) 
 # print(sys.argv[0])
-try:
-    print(sys.argv[1])
-    print(sys.argv[2])
-    print(sys.argv[3])
 
-    # global pipeline, stage, status
+arugumentsLen = len(sys.argv) -1
+if(arugumentsLen == 1):
     pipeline = sys.argv[1]
-    stage = sys.argv[2]
-    status = sys.argv[3]
-except Exception as ee:
-    print("No aruguments from commandline")
+else:
+    try:
+        print(sys.argv[1])
+        print(sys.argv[2])
+        print(sys.argv[3])
+
+        # global pipeline, stage, status
+        pipeline = sys.argv[1]
+        stage = sys.argv[2]
+        status = sys.argv[3]
+    except Exception as ee:
+        print("No aruguments from commandline")
 
 
 
@@ -92,41 +99,63 @@ def get_pipeline_stages(job_name, build_number):
     return response.json()
 
 
-def get_job_details(pipeline, stage, status):
+def get_job_details(pipeline, stage=None, status=None):
     server = get_server_instance()
     
-    try:
-        job = server.get_job(pipeline)
-    except Exception as e:
-        print(f"Failed to get job {pipeline}: {e}")
-        return
-    
-    print(f"Job details for {pipeline}: {job}")
-
-    if job.is_running():
-        try:
-            builds = job.get_build_dict()
-            i = 0
-            for build_number, build_url in builds.items():
-                build = job.get_build(build_number)
-                buildno = build.get_number()
-
-                stages = get_pipeline_stages(pipeline, buildno)
-                for eachstage in stages.get('stages', []):
-                    if eachstage['status'] == status and eachstage['name'] == stage:
-                        print(f"Job name: {pipeline}, Build number: {buildno}, Running on stage: {eachstage['name']}")
-                        i += 1
-            
-            if i == 0:
-                print("No builds match the criteria.")
-            else:
-                print(f"{i} number of builds are currently running on stage {stage} in {pipeline}")
-                
-        except Exception as e:
-            print(f"Error occurred while fetching builds or stages: {e}")
-
+    job_names = []
+    check_stage_status = True
+    if pipeline.lower() == "all":
+        job_names = ["MyPipeline1", "MyPipeline2", "MyPipeline3", "MyPipeline4"]
+        check_stage_status = False
     else:
-        print(f"Job {pipeline} is not currently running.")
+        job_names.append(pipeline)
+    
+    for job_name in job_names:
+        try:
+            job = server.get_job(job_name)
+        except Exception as e:
+            print(f"Failed to get job {job_name}: {e}")
+            continue
+
+        # print(f"Job details for {job_name}: {job}")
+
+        if job.is_running():
+            try:
+                builds = job.get_build_dict()
+                i = 0
+                for build_number, build_url in builds.items():
+                    build = job.get_build(build_number)
+                    buildno = build.get_number()
+                    buildTime = build.get_timestamp()
+                    currentTime = datetime.now(timezone.utc)
+                    timeDiff = currentTime - buildTime
+    
+                    stages = get_pipeline_stages(job_name, buildno)
+                    for eachstage in stages.get('stages', []):
+                        if check_stage_status:
+                            if eachstage['status'] == status and eachstage['name'] == stage:
+                                if status == "FAILED":
+                                    if timeDiff <= timedelta(hours=24):
+                                        print(f"Job name: {job_name}, Build number: {buildno}, {status} on  {eachstage['name']}")
+                                        i += 1
+                                else:
+                                    print(f"Job name: {job_name}, Build number: {buildno}, {status} on  {eachstage['name']}")
+                                    i += 1
+                        else:
+                            if eachstage['status'] == "IN_PROGRESS":
+                                print(f"Job name: {job_name}, Build number: {buildno}, Stage: {eachstage['name']}, Status: {eachstage['status']}")
+                                i += 1
+                
+                if i == 0:
+                    print(f"No builds match the criteria for job {job_name}.")
+                else:
+                    print(f"{i} number of builds {status} in {job_name}")
+                    
+            except Exception as e:
+                print(f"Error occurred while fetching builds or stages for job {job_name}: {e}")
+
+        else:
+            print(f"Job {job_name} is not currently running.")
 
 
 
@@ -147,4 +176,7 @@ def get_specific_job(jobname):
 
 # get_input()
 
-get_job_details(pipeline, stage, status)
+if(pipeline == "All"):
+    get_job_details("All")
+else:
+    get_job_details(pipeline,stage,status)
