@@ -12,7 +12,13 @@ pipeline {
 
         stage('Execute script') {
             steps {
-                sh "python test.py \"${params.pipeline}\" \"${params.stage}\" \"${params.status}\""
+                script {
+                    if (params.pipeline == 'All') {
+                        sh "python test.py \"${params.pipeline}\""
+                    } else {
+                        sh "python test.py \"${params.pipeline}\" \"${params.stage}\" \"${params.status}\""
+                    }
+                }
             }
         }
     }
