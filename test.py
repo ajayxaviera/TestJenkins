@@ -146,7 +146,7 @@ def get_job_details(pipeline, stage=None, status=None):
                                     print(f"Job name: {job_name}, Build number: {buildno}, {status} on  {eachstage['name']}")
                                     i += 1
                         else:
-                            if eachstage['status'] == "IN_PROGRESS":
+                            if eachstage['status'] == "IN_PROGRESS" or eachstage['status'] == "FAILED":
                                 print(f"Job name: {job_name}, Build number: {buildno}, Stage: {eachstage['name']}, Status: {eachstage['status']}")
                                 i += 1
                 
