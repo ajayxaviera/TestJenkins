@@ -1,0 +1,5 @@
+pipelines:
+  - MyPipeline1
+  - MyPipeline2
+  - MyPipeline3
+  - MyPipeline4
