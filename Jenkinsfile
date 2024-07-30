@@ -6,6 +6,7 @@ pipeline {
         stage('Install pip') {
             steps {
                 sh 'pip install jenkinsapi'
+                sh 'pip install pyyaml'
             }
         }
 
