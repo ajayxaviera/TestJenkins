@@ -105,7 +105,11 @@ def get_job_details(pipeline, stage=None, status=None):
     job_names = []
     check_stage_status = True
     if pipeline.lower() == "all":
-        job_names = ["MyPipeline1", "MyPipeline2", "MyPipeline3", "MyPipeline4"]
+         with open('pipelines.yaml', 'r') as file:
+            data = yaml.safe_load(file)
+
+        job_names = data['pipelines']
+        # job_names = ["MyPipeline1", "MyPipeline2", "MyPipeline3", "MyPipeline4"]
         check_stage_status = False
     else:
         job_names.append(pipeline)
